@@ -1,0 +1,116 @@
+{% extends 'login_layout.html' %}
+{% load static %}
+{% block title %} welcome{% endblock %}
+{% block content %}
+<link href='https://fonts.googleapis.com/css?family=Titillium+Web:400,300,600' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+{% verbatim %}
+<div ng-app="loginapp" ng-controller="loginctrl" ng-cloak class="form">
+    <div class="card-body">
+        <p class="login-box-msg">Register a new membership</p>
+        <form>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" ng-model="name" placeholder="Full name">
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-user"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" ng-model="username" placeholder="Email">
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-envelope"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <input type="password" ng-model="userpassword" class="form-control" placeholder="Password">
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-lock"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- /.col -->
+                <div class="col-4">
+                    <button type="submit" ng-click="register()" class="btn btn-primary btn-block">Register</button>
+                </div>
+                <!-- /.col -->
+            </div>
+        </form>
+        <a href="/" class="text-center">I already have a membership</a>
+    </div>
+    <!-- /.register-box -->
+</div>
+</div> <!-- /form -->
+<!-- partial -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src="./script.js"></script>
+
+{% endverbatim %}
+<script>
+   var myApp = angular.module('loginapp', ['ngMaterial','ui.bootstrap','ngMessages','AppCommon'])
+    .config(function($httpProvider) {
+        $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+        $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    });
+        myApp.run(function($mdDateLocale, $filter) {
+        $mdDateLocale.formatDate = function(date) {
+            return $filter('date')(date, "dd-MMM-yyyy");
+        };
+    })
+myApp.controller('loginctrl',function($scope,signupservice, $window, $filter,$mdDialog, $rootScope,$element,SerCommon) {
+      $element.find('input').on('keydown', function(ev) {
+          ev.stopPropagation();
+      });
+    $scope.signup = false;
+    $scope.login_screen = true;
+
+    $scope.choose = function(e){
+        if(e == 1){
+            $scope.signup = true;
+            $scope.login_screen = false;
+        }
+        else{
+            $scope.signup = false;
+            $scope.login_screen = true;
+        }
+    }
+    $scope.register = function(){
+        var data = {
+            "name":$scope.name,
+            "username":$scope.username,
+            "password":$scope.userpassword
+        }
+        var check = signupservice.signup(data)
+        check.then(function(result) {
+            $scope.main = result.data.message;
+            alert(result.data.status);
+            if(result.data.status=="success"){
+                $window.location.href = "/";
+            }
+            else{
+                alert(result.data.status);
+            }
+        });
+    }
+});
+myApp.service("signupservice", function($http) {
+    this.signup = function(data) {
+        var response = $http.post("/userdata",data);
+        return response;
+    }
+});
+
+
+
+
+
+
+
+
+</script>
+{% endblock %}
