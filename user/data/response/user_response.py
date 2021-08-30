@@ -35,7 +35,7 @@ class User_Response:
         self.task_desc = task_desc
 
     def set_taskdate(self, task_date):
-        task_date = task_date.strftime("%d-%b-%Y")
+        task_date = task_date.strftime("%d-%b-%Y %I:%M")
         self.task_date = task_date
 
     def set_status(self, status):

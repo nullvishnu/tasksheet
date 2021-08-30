@@ -12,43 +12,65 @@
             <h3 class="card-title">Employee Log</h3>
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-3">
-                    <md-input-container>
-                        <label>Task Name</label>
-                        <input maxlength="30"
-                               ng-model="name"
-                               placeholder="Task name"
-                               type="text"/>
-                    </md-input-container>
+            <form name="logdata" novalidate role="form">
+                <div class="row">
+                    <div class="col-3">
+                        <md-input-container>
+                            <label>Task Name</label>
+                            <input maxlength="30"
+                                   ng-model="name"
+                                   ng-required="true"
+                                   placeholder="Task name"
+                                   type="text"/>
+                        </md-input-container>
+                    </div>
+                    <div class="col-3">
+                        <md-input-container>
+                            <label>Task Description</label>
+                            <input maxlength="30"
+                                   ng-model="description"
+                                   ng-required="true"
+                                   placeholder="Task description"
+                                   type="text"/>
+                        </md-input-container>
+                    </div>
+                    <div class="col-2">
+                        <md-input-container>
+                            <label>Task Date</label>
+                            <md-datepicker formatDate
+                                           md-hide-icons="calendar" md-open-on-focus
+                                           ng-model="date"
+                                           ng-required="true">
+                            </md-datepicker>
+                        </md-input-container>
+                    </div>
+                    <div class="col-1">
+                        <md-input-container>
+                            <label>HH</label>
+                            <input maxlength="2"
+                                   ng-model="time1"
+                                   ng-required="true"
+                                   type="number"/>
+                        </md-input-container>
+                    </div>
+                    <div class="col-1">
+                        <md-input-container>
+                            <label>MM</label>
+                            <input maxlength="2"
+                                   ng-model="time2"
+                                   ng-required="true"
+                                   type="number"/>
+                        </md-input-container>
+                    </div>
                 </div>
-                <div class="col-3">
-                    <md-input-container>
-                        <label>Task Description</label>
-                        <input maxlength="30"
-                               ng-model="description"
-                               placeholder="Task description"
-                               type="text"/>
-                    </md-input-container>
+                <div class="row">
+                    <div class="col-1">
+                        <button type="submit" ng-disabled="logdata.$invalid" ng-click="submit()"
+                                class="btn btn-primary btn-block">Submit
+                        </button>
+                    </div>
                 </div>
-                <div class="col-3">
-                    <md-input-container>
-                        <label>Task Date</label>
-                    <md-datepicker formatDate
-                                   md-hide-icons="calendar" md-open-on-focus
-                                   ng-model="date"
-                                   ng-required="true">
-                    </md-datepicker>
-                    </md-input-container>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-1">
-                    <button type="submit" ng-click="submit()"
-                            class="btn btn-primary btn-block">Submit
-                    </button>
-                </div>
-            </div>
+            </form>
         </div>
         <!-- /.card-body -->
     </div>
@@ -83,13 +105,15 @@ app.run(function($mdDateLocale, $filter) {
         };
     });
 app.controller('myCtrl', function($scope, dashboardservice,$window, $filter,$mdDialog) {
-
+    $scope.hstep = 1;
+    $scope.mstep = 5;
+    $scope.ismeridian = true
     $scope.submit = function(){
-        if ($scope.name != undefined && $scope.description != undefined && $scope.date != undefined){
+<!--        if ($scope.name != undefined && $scope.description != undefined && $scope.date != undefined){-->
             var data = {
                 "name":$scope.name,
                 "description":$scope.description,
-                "date":$filter('date')(new Date($scope.date),'yyyy-MM-dd')
+                "date":$filter('date')(new Date($scope.date),'yyyy-MM-dd')+" "+$scope.time1+":"+$scope.time2
             }
             var check = dashboardservice.log_submit(data)
             check.then(function(result) {
@@ -101,7 +125,7 @@ app.controller('myCtrl', function($scope, dashboardservice,$window, $filter,$mdD
                     alert(result.data.message);
                 }
             });
-        }
+<!--        }-->
     }
 
     loaddata()
@@ -127,6 +151,15 @@ app.service("dashboardservice", function($http) {
         return response;
     }
 });
+
+
+
+
+
+
+
+
+
 
 
 
